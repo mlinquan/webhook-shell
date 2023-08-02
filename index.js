@@ -9,6 +9,7 @@ const _e = require('./i18n.js');
 const inquirer = require('inquirer');
 
 const package = require('./package.json')
+const checkUpdate = require('./check_update.js');
 
 const action = process.argv && process.argv[2];
 const root_dir = path.dirname(__filename);
@@ -111,6 +112,13 @@ switch(action) {
             }
             fs.writeFileSync(task_file_full_path, answers.shell_info)
         })
+    break;
+    case 'ck':
+    case 'check':
+        checkUpdate(true);
+    break;
+    case 'update':
+        checkUpdate(false);
     break;
     case 'stop':
         const stop_res = stopAndGetPort(true, false);

@@ -5,29 +5,17 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const root_dir = path.dirname(__filename);
-const { execSync, exec } = require('child_process');
+const { execSync } = require('child_process');
 const user_dir = path.join(execSync('cd ~ && pwd').toString().trim(), '.webhook-shell-tasks');
 const _e = require('./i18n.js');
-const package = require('./package.json')
-const use_mirror = new Date().getTimezoneOffset() === -480;
+const checkUpdate = require('./check_update.js');
 
 const schedule = require('node-schedule');
 
-const job = schedule.scheduleJob('44 44 4 * *', function(){
-    checkUpdate();
-});
-
-function checkUpdate() {
-    const mirror = use_mirror ? ' --registry=https://registry.npmmirror.com' : '';
-    const latest_version_exec = execSync(`npm view webhook-shell version${mirror}`);
-    const latest_version = latest_version_exec.toString().trim();
-    if (latest_version !== package.version) {
-        const new_package = package;
-        new_package.name = 'webhook-shell-';
-        fs.writeFileSync('package.json', JSON.stringify(new_package, null, 2));
-        const update_res = execSync(`npm i webhook-shell@${latest_version} -g${use_mirror} && webhook-shell restart`)
-        console.log(update_res.toString());
-    }
+if (argv.auto_update !== false) {
+    const job = schedule.scheduleJob('44 44 4 * *', function(){
+        checkUpdate();
+    });
 }
 
 const port = argv && argv.port && +argv.port || 8067;

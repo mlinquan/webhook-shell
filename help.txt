@@ -1,4 +1,4 @@
 Usage: webhook-shell <command>
 
 where <command> is one of:
-    start, restart, status, stop, ls, add, edit, del
+    start, restart, status, stop, ls, add, edit, del, check, update

@@ -32,17 +32,25 @@ webhook-shell ls
 
 # start server
 webhook-shell start
-webhook-shell start --port=3000 # default port is 8067
+webhook-shell start --port=3000 # Default port is 8067
+webhook-shell start --auto_update=false # Enable automatic updates by default, Automatic updates are executed every morning at 4:44:44 am, If do not want automatic updates, please set `auto_update` to false
 
 # restart server
-webhook-shell restart # inherit the previously set port
-webhook-shell restart --port=3000 # custom port restart
+webhook-shell restart # Inherit the port number used during the previous startup
+webhook-shell restart --port=3000 # Custom port restart
+webhook-shell restart --auto_update=false # Enable automatic updates by default, Automatic updates are executed every morning at 4:44:44 am, If do not want automatic updates, please set `auto_update` to false
 
 # view server status
 webhook-shell status
 
 # stop server
 webhook-shell stop
+
+# check update
+webhook-shell check
+
+# update
+webhook-shell update
 ```
 
 ## Nginx proxy
