@@ -1,0 +1,33 @@
+{
+  "name": "webhook-shell",
+  "version": "0.0.24",
+  "description": "",
+  "main": "index.js",
+  "bin": {
+    "webhook-shell": "index.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "LinQuan",
+  "license": "MIT & Anti-996",
+  "dependencies": {
+    "inquirer": "^8.0.0",
+    "node-schedule": "^2.1.1"
+  },
+  "keywords": [
+    "webhook",
+    "shell",
+    "remote",
+    "client",
+    "script"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mlinquan/webhook-shell.git"
+  },
+  "bugs": {
+    "url": "https://github.com/mlinquan/webhook-shell/issues"
+  },
+  "homepage": "https://github.com/mlinquan/webhook-shell#readme"
+}
