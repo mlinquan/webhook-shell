@@ -16,7 +16,7 @@ const i18n = {
         'Delete canceled': '已取消删除',
         'Webhook-shell not started': 'Webhook-shell 未启动',
         'Webhook-shell not started or Webhook-shell process exception': 'Webhook-shell未启动或Webhook-shell进程异常',
-        'The current installed version is %1, The latest version is %0': '当前版本为%1, 最新版本为%1'
+        'The current installed version is %0, The latest version is %1': '当前版本为%1, 最新版本为%1'
     }
 };
 
