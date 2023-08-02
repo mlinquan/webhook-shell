@@ -8,12 +8,14 @@ const i18n = {
         'The task name \'%0\' is illegal, only English letters and numbers are allowed.': '任务名"%0"不合法，只允许英文字母和数字。',
         'The task name \'%0\' already exists, do you want to overwrite it?': '任务名"%0"已存在，是否要覆盖？',
         'The task name \'%0\' is not exists.': '任务名"%0"不存在。',
-        'Webhook-shell is running at %0.': 'Webhook-shell运行于 %0',
+        'Webhook-shell is running at %0.': 'Webhook-shell 运行于 %0',
         'For safety reasons, parameters are not allowed to include \'&\' and line breaks.': '为了安全考虑，参数中不允许包含 & 和换行符。',
         'Please select the task name you want to modify: ': '请选择要修改的任务名',
         'Please select the task name you want to delete: ': '请选择要删除的任务名',
         'Task \'%0\' has been successfully deleted': '任务"%0"已被删除',
-        'Delete canceled': '已取消删除'
+        'Delete canceled': '已取消删除',
+        'Webhook-shell not started': 'Webhook-shell 未启动',
+        'Webhook-shell not started or Webhook-shell process exception': 'Webhook-shell未启动或Webhook-shell进程异常'
     }
 };
 

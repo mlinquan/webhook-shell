@@ -3,6 +3,7 @@
 const argv = require('./argv.js');
 const fs = require('fs');
 const path = require('path');
+const http = require('http');
 const readline = require('readline');
 const { execSync, exec, spawn } = require('child_process');
 const _e = require('./i18n.js');
@@ -45,6 +46,37 @@ if (!action || argv_list.includes('--help') || argv_list.includes('help')) {
     const help = fs.readFileSync(`${root_dir}/help.txt`)
     console.log(help.toString());
     process.exit(0);
+}
+
+function stopAndGetPort(stop, getPort) {
+    let old_port = null
+    try{
+        const ps_res = execSync("ps aux | grep 'webhook-shell/server.js'");
+        const ps_str = ps_res.toString();
+        const ps_list = ps_str.split("\n");
+        for(let i=0;i<ps_list.length;i++) {
+            const ps_i = ps_list[i];            
+            if (ps_i) {
+                const ps_arr = ps_i.split(/\s+/);
+                if (ps_arr && ps_arr[10] === 'node' && stop) {
+                    const stopRes = execSync(`kill -9 ${ps_arr[1]}`);
+                    if (!getPort) {
+                        return stopRes.toString();
+                    }
+                }
+                const old_port_info = ps_arr.find(ps => ps.startsWith('--port='))
+                if (old_port_info) {
+                    old_port = +old_port_info.replace('--port=', '')
+                }
+            }
+        }
+    } catch(e) {
+        return e;
+    }
+    if (stop && !old_port) {
+        return _e('Webhook-shell not started');
+    }
+    return old_port;
 }
 
 switch(action) {
@@ -96,31 +128,16 @@ switch(action) {
             fs.writeFileSync(task_file_full_path, answers.shell_info)
         })
     break;
+    case 'stop':
+        const stop_res = stopAndGetPort(true, false);
+        console.log(stop_res);
+    break;
     case 'start':
     case 'restart':
         if (argv.clean) {
             fs.writeFileSync(`${log_dir}/nohup.out`, '');
         }
-        let old_port = null;
-        try{
-            const ps_res = execSync("ps aux | grep 'webhook-shell/server.js'");
-            const ps_str = ps_res.toString();
-            const ps_list = ps_str.split("\n");
-            for(let i=0;i<ps_list.length;i++) {
-                const ps_i = ps_list[i];
-                if (ps_i) {
-                    const ps_arr = ps_i.split(/\s+/);
-                    if (ps_arr && ps_arr[10] === 'node') {
-                        execSync(`kill -9 ${ps_arr[1]}`);
-                    }
-                    const old_port_info = ps_arr.find(ps => ps.startsWith('--port='))
-                    if (old_port_info) {
-                        old_port = +old_port_info.replace('--port=', '')
-                    }
-                }
-            }
-        } catch(e) {
-        }
+        let old_port = stopAndGetPort(true, true);
         const port_info = action === 'restart' && old_port ? `--port=${old_port}` : `--port=${argv.port && +argv.port ? +argv.port : 8067}`
         const ls = spawn('nohup', ['node', `${root_dir}/server.js`, '--title="webhook-shell"', `--debug="${debug}"`, port_info, '&'], { stdio: 'inherit', shell: true, cwd: log_dir });
         ls.on('close', (code) => {
@@ -128,6 +145,25 @@ switch(action) {
                 spawn('tail', [`${log_dir}/nohup.out`], { stdio: 'inherit', shell: true });
             }, 100);
         });
+    break;
+    case 'status':
+        let whs_port = stopAndGetPort(false, true);
+        if (whs_port) {
+            const request = http.get(`http://127.0.0.1:${whs_port}`, (res) => {//res是请求后端给你的数据
+                const { statusCode } = res;
+                if (statusCode === 200) {
+                    const now = new Date().toLocaleString();
+                    console.log(`[${now}] ${_e('Webhook-shell is running at %0.', `${whs_port}`)}`);
+                } else {
+                    console.log('Webhook-shell not started or Webhook-shell process exception');
+                }
+            });
+            request.on('error', (e) => {
+                console.log('Webhook-shell not started or Webhook-shell process exception');
+            });
+        } else {
+            console.log(_e('Webhook-shell not started'));
+        }
     break;
     case 'ls':
         const tasks = fs.readdirSync(`${user_dir}`);

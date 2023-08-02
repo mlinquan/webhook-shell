@@ -37,6 +37,12 @@ webhook-shell start --port=3000 # default port is 8067
 # restart server
 webhook-shell restart # inherit the previously set port
 webhook-shell restart --port=3000 # custom port restart
+
+# view server status
+webhook-shell status
+
+# stop server
+webhook-shell stop
 ```
 
 ## Nginx proxy
