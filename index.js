@@ -215,6 +215,7 @@ switch(action) {
         })
     break;
     default:
+        console.log('Webhook-shell verions:', package.version);
         const help = fs.readFileSync(`${root_dir}/help.txt`)
         console.log(help.toString());
     break;
