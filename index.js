@@ -4,28 +4,18 @@ const argv = require('./argv.js');
 const fs = require('fs');
 const path = require('path');
 const http = require('http');
-const readline = require('readline');
-const { execSync, exec, spawn } = require('child_process');
+const { execSync, spawn } = require('child_process');
 const _e = require('./i18n.js');
 const inquirer = require('inquirer');
 
 const package = require('./package.json')
 
-const argv_list = process.argv || [];
 const action = process.argv && process.argv[2];
 const root_dir = path.dirname(__filename);
 const user_dir = path.join(execSync('cd ~ && pwd').toString().trim(), '.webhook-shell-tasks');
 const log_dir = path.join(execSync('cd ~ && pwd').toString().trim(), '.webhook-shell-log');
 
 const debug = !!argv.debug;
-
-const aaa = exec('cd ~', (error, stdout, stderr) => {
-    //console.log(error, stdout, stderr)
-});
-
-aaa.on('exit', function() {
-    //console.log(this)
-})
 
 if (!fs.existsSync(user_dir)) {
     fs.mkdirSync(user_dir);
@@ -41,12 +31,6 @@ if (!fs.existsSync(`${log_dir}/nohup.out`)) {
 
 fs.copyFileSync(`${root_dir}/tasks/test`, `${user_dir}/test`);
 fs.copyFileSync(`${root_dir}/tasks/test2`, `${user_dir}/test2`);
-
-if (!action || argv_list.includes('--help') || argv_list.includes('help')) {
-    const help = fs.readFileSync(`${root_dir}/help.txt`)
-    console.log(help.toString());
-    process.exit(0);
-}
 
 function stopAndGetPort(stop, getPort) {
     let old_port = null
@@ -230,6 +214,8 @@ switch(action) {
             })
         })
     break;
-    defalut:
+    default:
+        const help = fs.readFileSync(`${root_dir}/help.txt`)
+        console.log(help.toString());
     break;
 }
