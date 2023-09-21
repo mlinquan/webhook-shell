@@ -99,9 +99,12 @@ const server = http.createServer((req, res) => {
     } else {
         res.end();
     }
-}).listen(port, '0.0.0.0', () => {
+});
+
+server.maxHeadersCount = 20;
+server.timeout = 15 * 60 * 1000;
+
+server.listen(port, '0.0.0.0', () => {
     const now = new Date().toLocaleString();
     console.log(`[${now}] ${_e('Webhook-shell is running at %0.', `${getIP()}:${port}`)}`);
 });
-
-server.timeout = 15 * 60 * 1000;
