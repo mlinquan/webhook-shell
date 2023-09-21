@@ -5,10 +5,29 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const root_dir = path.dirname(__filename);
-const { execSync } = require('child_process');
+const { exec, execSync } = require('child_process');
 const user_dir = path.join(execSync('cd ~ && pwd').toString().trim(), '.webhook-shell-tasks');
 const _e = require('./i18n.js');
 const checkUpdate = require('./check_update.js');
+
+const execPromise = function(command, options) {
+    options = {...options}
+    return new Promise((resolve, reject) => {
+        exec(command, options, (error, stdout, stderr) => {
+            /* if (/npm run lint/.test(command)) {
+                fs.writeFileSync('eslint_result.txt', JSON.stringify({
+                    error, stdout, stderr
+                }, null, 4))
+            } */
+            if (error) {
+                error.stdout = error.stdout || stdout
+                error.stderr = error.stderr || stderr
+                return reject(error)
+            }
+            resolve(stdout + stderr)
+        })
+    })
+};
 
 const schedule = require('node-schedule');
 
@@ -80,7 +99,7 @@ const server = http.createServer((req, res) => {
             fs.writeFileSync(command_sh, command);
             let execRes = null
             try{
-                execRes = execSync(`sh ${command_sh}`);
+                execRes = await execPromise(`sh ${command_sh}`);
                 execRes = execRes.toString();
             } catch(e) {
                 console.log(e);
@@ -89,7 +108,7 @@ const server = http.createServer((req, res) => {
 
             debug && console.log(execRes);
 
-            const rmShTmp = execSync(`rm -fr ${command_sh}`);
+            const rmShTmp = await execPromise(`rm -fr ${command_sh}`);
 
             res.setHeader('Content-Type', 'text/html; charset=utf8');
             res.writeHead(200);
@@ -101,7 +120,6 @@ const server = http.createServer((req, res) => {
     }
 });
 
-server.maxHeadersCount = 20;
 server.timeout = 15 * 60 * 1000;
 
 server.listen(port, '0.0.0.0', () => {
