@@ -72,7 +72,7 @@ const server = http.createServer((req, res) => {
             const taskName = body.taskName;
             if (!taskName || !fs.existsSync(`${user_dir}/${taskName}`)) {
                 res.setHeader('Content-Type', 'application/json; charset=utf-8');
-                res.writeHead(200);
+                res.writeHead(500);
                 res.write(`{"code": 2, "msg": "${_e('The task name \'%0\' is not exists.', taskName)}"}`)
                 return res.end();
             }
@@ -85,7 +85,7 @@ const server = http.createServer((req, res) => {
                 const val = body[key];
                 if (/(\&|\n|\r)/.test(val)) {
                     res.setHeader('Content-Type', 'application/json; charset=utf-8');
-                    res.writeHead(200);
+                    res.writeHead(500);
                     res.write(`{"code": 3, "msg": "${_e('For safety reasons, parameters are not allowed to include \'&\' and line breaks.')}"}`)
                     return res.end();
                 }
