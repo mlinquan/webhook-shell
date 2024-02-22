@@ -98,12 +98,14 @@ const server = http.createServer((req, res) => {
 
             fs.writeFileSync(command_sh, command);
             let execRes = null
+            let status = 200;
             try{
                 execRes = await execPromise(`sh ${command_sh}`);
                 execRes = execRes.toString();
             } catch(e) {
                 console.log(e);
                 execRes = e && e.message;
+                status = 500;
             }
 
             debug && console.log(execRes);
@@ -111,7 +113,7 @@ const server = http.createServer((req, res) => {
             const rmShTmp = await execPromise(`rm -fr ${command_sh}`);
 
             res.setHeader('Content-Type', 'text/html; charset=utf8');
-            res.writeHead(200);
+            res.writeHead(status);
             res.write(execRes);
             return res.end();
         });
